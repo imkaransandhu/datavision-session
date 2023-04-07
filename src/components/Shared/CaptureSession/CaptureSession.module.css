@@ -1,0 +1,33 @@
+.capture-session-banner {
+  background-color: var(--banner-primary);
+  color: var(--secondary);
+  text-align: center;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  height: 2rem;
+  width: 100%;
+  top: 0;
+}
+.capture-session-banner p + .capture-banner-fixed p {
+  font-family: "Montserrat";
+  font-style: normal;
+  font-weight: normal;
+  font-size: var(--fs-16);
+  line-height: 108.9%;
+}
+
+.capture-banner-fixed {
+  background-color: #2d00f7;
+  background-color: #755af0;
+  color: #ffffff;
+  text-align: center;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  height: 2rem;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 9999;
+  transition: all 0.5s ease-out;
+}
