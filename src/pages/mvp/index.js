@@ -65,7 +65,9 @@ export default function Home() {
     const newGuid = uuidv4();
 
     PostGuid(newGuid);
-    setUrl(`${process.env.WEB_URL}/session/${newGuid}`);
+    console.log(process.env.WEB_URL);
+
+    setUrl(`https://datasession.herokuapp.com/session/${newGuid}`);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -86,7 +88,7 @@ export default function Home() {
       setShowQrCode(false);
       const newGuid = uuidv4();
       PostGuid(newGuid);
-      setUrl(`${process.env.WEB_URL}/session/${newGuid}`);
+      setUrl(`https://datasession.herokuapp.com/session/${newGuid}`);
       setTimeout(() => {
         setShowQrCode(true);
       }, time * 1000);
