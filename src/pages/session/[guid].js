@@ -21,8 +21,8 @@ export default function ValidatingUser() {
       .catch((error) => console.error(error));
 
     if (guid) {
-      console.log(guidFromFile, guid);
       if (guid === guidFromFile) {
+        console.log(guid);
         setLoading(true);
         setSessionExpired(false);
         const expirationTime = new Date(Date.now() + 40 * 1 * 1000); // 5 minutes from now
