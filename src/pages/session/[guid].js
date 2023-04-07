@@ -44,9 +44,8 @@ export default function ValidatingUser() {
           setLoading(false);
         }
         socketRun();
-        setTimeout(() => {
-          router.push("/capture");
-        }, 2000);
+
+        router.push("/onboarding");
       } else {
         setLoading(false);
         setSessionExpired(true);
