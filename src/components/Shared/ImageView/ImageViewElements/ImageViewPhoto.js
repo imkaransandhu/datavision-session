@@ -6,13 +6,7 @@ import LoadScreen from "../../LoadScreen/LoadScreen";
 const ImageViewPhoto = ({ imgSrc }) => {
   return (
     <div className={styles["image-view-photo"]}>
-      <Image
-        width={500}
-        height={500}
-        loading="lazy"
-        src={imgSrc}
-        alt="Your Scene"
-      />
+      <Image width={500} height={500} src={imgSrc} alt="Your Scene" />
     </div>
   );
 };

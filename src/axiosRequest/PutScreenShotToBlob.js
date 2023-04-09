@@ -4,7 +4,7 @@ const PutScreenShotToBlob = (imgSrc, socket) => {
   function isDataURI(str) {
     return /^data:[^;]+(;[^,]+)*(,.*|$)/.test(str);
   }
-
+  console.log(socket);
   // Validating if the imgSrc is a valid DataURI
   if (isDataURI(imgSrc)) {
     //  Creating the name of file with a time and date stamp
@@ -38,7 +38,8 @@ const PutScreenShotToBlob = (imgSrc, socket) => {
     axios
       .request(config)
       .then((response) => {
-        socket.emit("uploaded-blob", fileName);
+        socket.publish("uploaded-blob", fileName);
+        // socket.emit("uploaded-blob", fileName);
       })
       .catch((error) => {
         console.log(error);

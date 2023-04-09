@@ -10,6 +10,7 @@ import ScreenShotElements from "./ScreenShotElements/ScreenShotElements";
 import PutScreenShotToBlob from "@/axiosRequest/PutScreenShotToBlob";
 import styles from "./WorkingElements/WorkingElements.module.css";
 import PostGuid from "@/axiosRequest/PostGuid";
+import Ably from "ably";
 
 // Note: Require the cpu and webgl backend and add them to package.json as peer dependencies.
 
@@ -30,7 +31,7 @@ export default function Home() {
   const [displayValueText, setDisplayValueText] = useState(false); // Variable to store if the person is detected
   const [url, setUrl] = useState();
   const [showQrCode, setShowQrCode] = useState(true);
-  const [mySocket, setMySocket] = useState([]);
+  const [mySocket, setMySocket] = useState({});
 
   useEffect(() => {
     // Assigning the current states
@@ -65,43 +66,71 @@ export default function Home() {
     const newGuid = uuidv4();
 
     PostGuid(newGuid);
-    console.log(process.env.WEB_URL);
+    console.log(process.env);
 
-    setUrl(`https://datasession.herokuapp.com/session/${newGuid}`);
+    setUrl(`http://192.168.1.20:3000/session/${newGuid}`);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const socketInitializer = async () => {
-    await fetch("/api/screenshot");
-    const newSocket = io();
+    // For the full code sample see here: https://github.com/ably/quickstart-js
+    const ably = new Ably.Realtime.Promise(
+      "KpozvA.0YAo5A:NyOJl5ifGsBr-5GlacgyQMxe0io77DeAnUiUfXe-uUI"
+    );
+    await ably.connection.once("connected");
+    console.log("Connected to Ably!");
 
-    newSocket.on("connect", () => {
-      console.log("connected");
-    });
+    // get the channel to subscribe to
+    const channel = ably.channels.get("quickstart");
 
-    newSocket.on("receive-blob", () => {
-      takeScreenshot(newSocket);
+    /* 
+  Subscribe to a channel. 
+  The promise resolves when the channel is attached 
+  (and resolves synchronously if the channel is already attached).
+*/
+    await channel.subscribe("send-blob", (name) => {
+      console.log(name.data);
+      takeScreenshot(channel);
       handleScreenChange(setCurrentScreen);
     });
 
-    newSocket.on("create-qr-code", (time) => {
+    await channel.subscribe("change-qr-code", (time) => {
+      console.log("creating a new qr code");
+      let newTime = +time.data;
       setShowQrCode(false);
       const newGuid = uuidv4();
       PostGuid(newGuid);
-      setUrl(`https://datasession.herokuapp.com/session/${newGuid}`);
+      setUrl(`http://192.168.1.20:3000/session/${newGuid}`);
       setTimeout(() => {
         setShowQrCode(true);
-      }, time * 1000);
+      }, newTime * 1000);
     });
-    setMySocket(newSocket);
+    // newSocket.on("receive-blob", () => {
+    //   takeScreenshot(newSocket);
+    //   handleScreenChange(setCurrentScreen);
+    // });
+
+    // newSocket.on("create-qr-code", (time) => {
+    //   console.log("creating a new qr code");
+    //   setShowQrCode(false);
+    //   const newGuid = uuidv4();
+    //   PostGuid(newGuid);
+    //   setUrl(`http://192.168.1.20:3000/session/${newGuid}`);
+    //   setTimeout(() => {
+    //     setShowQrCode(true);
+    //   }, time * 1000);
+    // });
+    // setMySocket(newSocket);
+    setMySocket(channel);
   };
 
-  function takeScreenshot(mySocket) {
+  function takeScreenshot(socket) {
+    console.log("sdfsdfsd");
     let dataUrl;
     const canvasElement = ScreenShotElementsRef.current; //getting the container in which the canvas element is
     html2canvas(canvasElement).then((canvas) => {
       dataUrl = canvas.toDataURL("image/png");
-      PutScreenShotToBlob(dataUrl, mySocket);
+      PutScreenShotToBlob(dataUrl, socket);
     });
     flashRef.current.classList.add(styles["flash-active"]);
     setTimeout(() => {

@@ -1,6 +1,6 @@
 .image-view {
   width: 100%;
-  height: 100%;
+  height: 100vh;
   position: fixed;
   top: 0;
   left: 0;
@@ -11,6 +11,7 @@
   row-gap: 2rem;
   z-index: 30;
   padding-top: 3rem;
+  scroll-behavior: unset;
   align-items: flex-start;
 }
 

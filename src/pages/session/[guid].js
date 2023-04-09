@@ -6,7 +6,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import LoadScreen from "@/components/Shared/LoadScreen/LoadScreen";
 import io from "socket.io-client";
-
+import Ably from "ably";
 export default function ValidatingUser() {
   const router = useRouter();
   const { guid } = router.query;
@@ -33,14 +33,34 @@ export default function ValidatingUser() {
         );
         setSession({ guid, expirationTime, isVerified: true });
         async function socketRun() {
-          await fetch("/api/screenshot");
-          const newSocket = io();
+          // For the full code sample see here: https://github.com/ably/quickstart-js
+          const ably = new Ably.Realtime.Promise(
+            "KpozvA.0YAo5A:NyOJl5ifGsBr-5GlacgyQMxe0io77DeAnUiUfXe-uUI"
+          );
+          await ably.connection.once("connected");
+          console.log("Connected to Ably!");
 
-          newSocket.on("connect", () => {
-            console.log("connected");
-            const timeToCreateQrCode = 40;
-            newSocket.emit("change-qr-code", timeToCreateQrCode);
-          });
+          // get the channel to subscribe to
+          const channel = ably.channels.get("quickstart");
+
+          /* 
+          Subscribe to a channel. 
+          The promise resolves when the channel is attached 
+          (and resolves synchronously if the channel is already attached).
+          */
+          const timeToCreateQrCode = "40";
+
+          await channel.publish("change-qr-code", timeToCreateQrCode);
+
+          // await fetch("/api/screenshot");
+          // const newSocket = io();
+
+          // newSocket.on("connect", () => {
+          //   console.log("connected");
+          //   const timeToCreateQrCode = 40;
+          //   newSocket.emit("change-qr-code", timeToCreateQrCode);
+          // });
+
           setLoading(false);
         }
         socketRun();
