@@ -2,9 +2,9 @@ import axios from "axios";
 
 export default function PostGuid(guid) {
   // Update the Guid.json file with the latest GUID value
-  let data = JSON.stringify({
+  let data = {
     guid: guid,
-  });
+  };
 
   let config = {
     method: "post",
