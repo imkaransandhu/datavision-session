@@ -91,8 +91,12 @@ export default function Home() {
 */
     await channel.subscribe("send-blob", (name) => {
       console.log(name.data);
-      takeScreenshot(channel);
-      handleScreenChange(setCurrentScreen);
+      setTimeout(() => {
+        takeScreenshot(channel);
+        setTimeout(() => {
+          handleScreenChange(setCurrentScreen);
+        }, 1000);
+      }, 3000);
     });
 
     await channel.subscribe("change-qr-code", (time) => {
