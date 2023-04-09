@@ -16,13 +16,13 @@ export default function ValidatingUser() {
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     axios
-      .get("/api/GetGuid")
-      .then((response) => setGuidFromFile(response.data.guid))
+      .get("/api/GetBlobGuid")
+      .then((response) => setGuidFromFile(response.data))
       .catch((error) => console.error(error));
 
     if (guid) {
+      console.log(guid, guidFromFile);
       if (guid === guidFromFile) {
-        console.log(guid);
         setLoading(true);
         setSessionExpired(false);
         const expirationTime = new Date(Date.now() + 40 * 1 * 1000); // 5 minutes from now

@@ -2,14 +2,14 @@ import axios from "axios";
 
 export default function PostGuid(guid) {
   // Update the Guid.json file with the latest GUID value
-  let data = {
+  let data = JSON.stringify({
     guid: guid,
-  };
+  });
 
   let config = {
     method: "post",
     maxBodyLength: Infinity,
-    url: "/api/PostGuid",
+    url: "/api/PutBlobGuid",
     headers: {
       "Content-Type": "application/json",
     },
@@ -19,7 +19,7 @@ export default function PostGuid(guid) {
   axios
     .request(config)
     .then((response) => {
-      console.log(`uploaded Successfully ${response.data.guid}`);
+      console.log(JSON.stringify(response.data));
     })
     .catch((error) => {
       console.log(error);

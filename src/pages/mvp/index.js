@@ -11,6 +11,7 @@ import PutScreenShotToBlob from "@/axiosRequest/PutScreenShotToBlob";
 import styles from "./WorkingElements/WorkingElements.module.css";
 import PostGuid from "@/axiosRequest/PostGuid";
 import Ably from "ably";
+import URL from "@/functions/Url";
 
 // Note: Require the cpu and webgl backend and add them to package.json as peer dependencies.
 
@@ -68,7 +69,7 @@ export default function Home() {
     PostGuid(newGuid);
     console.log(process.env);
 
-    setUrl(`https://datavision-session.vercel.app/session/${newGuid}`);
+    setUrl(`${URL}/session/${newGuid}`);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -100,7 +101,8 @@ export default function Home() {
       setShowQrCode(false);
       const newGuid = uuidv4();
       PostGuid(newGuid);
-      setUrl(`https://datavision-session.vercel.app/session/${newGuid}`);
+      setUrl(`${URL}/session/${newGuid}`);
+
       setTimeout(() => {
         setShowQrCode(true);
       }, newTime * 1000);
