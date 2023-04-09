@@ -2,7 +2,7 @@ const { BlobServiceClient } = require("@azure/storage-blob");
 export const config = {
   api: {
     bodyParser: {
-      sizeLimit: "8mb",
+      sizeLimit: "20mb",
     },
   },
 };

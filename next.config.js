@@ -5,7 +5,7 @@ const nextConfig = {
     domains: ["interactivewallgallery.blob.core.windows.net"],
   },
   api: {
-    responseLimit: "8mb",
+    responseLimit: "20mb",
   },
 };
 
