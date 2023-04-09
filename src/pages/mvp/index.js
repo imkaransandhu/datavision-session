@@ -136,6 +136,7 @@ export default function Home() {
     const canvasElement = ScreenShotElementsRef.current; //getting the container in which the canvas element is
     html2canvas(canvasElement).then((canvas) => {
       dataUrl = canvas.toDataURL("image/png");
+      console.log(dataUrl);
       PutScreenShotToBlob(dataUrl, socket);
     });
     flashRef.current.classList.add(styles["flash-active"]);
