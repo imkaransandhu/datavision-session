@@ -6,6 +6,7 @@ const nextConfig = {
   },
   api: {
     responseLimit: "8mb",
+    bodyParser: false,
   },
 };
 
