@@ -4,10 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
-    "start": "next start ",
-    "lint": "next lint",
-    "api": "vercel dev api"
+    "build": "next build && next export",
+    "start": "next start",
+    "lint": "next lint"
   },
   "dependencies": {
     "@azure/storage-blob": "^12.13.0",
