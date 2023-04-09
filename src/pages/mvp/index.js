@@ -68,7 +68,7 @@ export default function Home() {
     PostGuid(newGuid);
     console.log(process.env);
 
-    setUrl(`http://192.168.1.20:3000/session/${newGuid}`);
+    setUrl(`https://datavision-session.vercel.app/session/${newGuid}`);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -100,7 +100,7 @@ export default function Home() {
       setShowQrCode(false);
       const newGuid = uuidv4();
       PostGuid(newGuid);
-      setUrl(`http://192.168.1.20:3000/session/${newGuid}`);
+      setUrl(`https://datavision-session.vercel.app/session/${newGuid}`);
       setTimeout(() => {
         setShowQrCode(true);
       }, newTime * 1000);
