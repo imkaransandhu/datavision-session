@@ -1,69 +1,51 @@
 /* eslint-disable @next/next/no-img-element */
+import { useState } from "react";
 import styles from "./GalleryGrid.module.css";
-import { useEffect, useState } from "react";
+import Image from "next/image";
 
-export default function GalleryGrid({
-  data,
-  isListView,
-  loadImageView,
-  defaultSortingOption,
-}) {
-  // const [dataHasBeenSorted, setDataHasBeenSorted] = useState([])
-  const [dataHasBeenSorted, setDataHasBeenSorted] = useState(data); //works initially but not when list view
-  // const [dataHasBeenSorted, setDataHasBeenSorted] = useState('')
+export default function GalleryGrid({ data, isListView, loadImageView }) {
+  const [numToShow, setNumToShow] = useState(10);
 
-  // function sortByLastModified(arr) {
-  //   arr.sort(function (a, b) {
-  //       return (
-  //         new Date(a.lastModified).getTime() - new Date(b.lastModified).getTime()
-  //       );
-  //   });
-  //   return arr;
-  // }
-  // const sortedData = sortByLastModified(data);
+  const handleSeeMore = () => {
+    setNumToShow((num) => num + 10);
+  };
 
-  function sortByLastModified(arr, defaultSortingOption) {
-    arr.sort(function (a, b) {
-      if (defaultSortingOption === "Latest") {
-        console.log("inside the sort function=latest");
-        return (
-          new Date(a.createdOn).getTime() - new Date(b.createdOn).getTime()
-        );
-      } else if (defaultSortingOption === "Oldest") {
-        console.log("inside the sort function=oldest");
-        return (
-          new Date(b.createdOn).getTime() - new Date(a.createdOn).getTime()
-        );
-      }
-    });
-    return arr;
-  }
-
-  useEffect(() => {
-    const sortedData = sortByLastModified(data, defaultSortingOption);
-    setDataHasBeenSorted(sortedData);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [defaultSortingOption]);
+  const visibleResults = data.slice(0, numToShow);
 
   return (
-    <div
-      className={
-        isListView
-          ? styles["list-outer-container"]
-          : styles["grid-outer-container"]
-      }
-    >
-      {dataHasBeenSorted.map((item, index) => {
-        return (
-          <button
-            onClick={loadImageView}
-            className={styles["grid-item"]}
-            key={index}
-          >
-            <img src={item.url} alt="Captured interactive image"></img>
-          </button>
-        );
-      })}
+    <div>
+      <div
+        className={
+          isListView
+            ? styles["list-outer-container"]
+            : styles["grid-outer-container"]
+        }
+      >
+        {/* <div className={styles["grid-item"]}></div> <div className={styles["grid-item"]}></div> <div className={styles["grid-item"]}></div> <div className={styles["grid-item"]}></div> */}{" "}
+        {visibleResults.map((item, index) => {
+          return (
+            <button
+              onClick={loadImageView}
+              className={styles["grid-item"]}
+              key={index}
+            >
+              <img src={item.url} alt="Captured interactive image"></img>
+            </button>
+          );
+        })}
+      </div>
+      <button onClick={handleSeeMore} className={styles["show-more-btn"]}>
+        <span>
+          <p>Show More</p>
+          <Image
+            src="/images/blue-chevron.svg"
+            alt="dropdown arrow"
+            width={15}
+            height={9}
+            style={{ marginTop: "0.25rem" }}
+          ></Image>
+        </span>
+      </button>
     </div>
   );
 }

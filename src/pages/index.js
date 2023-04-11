@@ -17,6 +17,7 @@ import LoadScreen from "@/components/Shared/LoadScreen/LoadScreen";
 
 // css
 import styles from "./page.module.css";
+import ScrollBtn from "@/components/ScrollBtn/ScrollBtn";
 
 export default function Home() {
   const [isListView, setIsListView] = useState(true); // Lisitng View of images
@@ -39,11 +40,19 @@ export default function Home() {
     axios
       .request(config)
       .then((response) => {
-        setData(response.data);
+        const sortdata = sortByLastModified(response.data);
+        setData(sortdata);
       })
       .catch((error) => {
         console.log(error);
       });
+  }
+
+  function sortByLastModified(arr) {
+    arr.sort(function (a, b) {
+      return new Date(b.createdOn).getTime() - new Date(a.createdOn).getTime();
+    });
+    return arr;
   }
 
   // Use effect to look if the cookie has session in it
@@ -130,6 +139,7 @@ export default function Home() {
           handleImageViewCrossBtn={handleImageViewCrossBtn}
         />
       )}
+      <ScrollBtn />
     </div>
   );
 }

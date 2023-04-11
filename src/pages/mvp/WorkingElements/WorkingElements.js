@@ -16,7 +16,7 @@ const WorkingElements = ({
   url,
 }) => {
   const videoToRevealSrc = [
-    "/video/thriveTogether_AdobeExpress.mp4",
+    "/video/Thrive Together_01 (Animation02).mp4",
     "https://interactivewallgallery.blob.core.windows.net/tv-screen-video/lookBeyondToday.mp4",
     "https://interactivewallgallery.blob.core.windows.net/tv-screen-video/lookBeyondToday.mp4",
   ];

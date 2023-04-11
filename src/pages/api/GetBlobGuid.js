@@ -1,9 +1,8 @@
 const { BlobServiceClient } = require("@azure/storage-blob");
 export default async function getBlobGuid(request, res) {
-  const accountName = "guiddatavision";
-  const accountKey =
-    "YrmqEDdjAuaxRjCxP4RrJfr81NfcT8chie+3Vt7l4rXMzeiCC1lq5Ax8IpkYNSchnZd+/btwoXBf+AStdjMThA==";
-  const containerName = "var-guid";
+  const accountName = process.env.ACCOUNT_NAME;
+  const accountKey = process.env.AZURE_BLOB_KEY;
+  const containerName = process.env.CONTAINER_GUID;
   const blobName = "guid.json";
   const connStr = `DefaultEndpointsProtocol=https;AccountName=${accountName};AccountKey=${accountKey};EndpointSuffix=core.windows.net`;
   const blobServiceClient = BlobServiceClient.fromConnectionString(connStr);
@@ -17,7 +16,6 @@ export default async function getBlobGuid(request, res) {
   const guidJson = JSON.parse(downloadedContent);
 
   const guid = guidJson.guid;
-  console.log(`GUID: ${guid}`);
   res.json(guid);
 }
 

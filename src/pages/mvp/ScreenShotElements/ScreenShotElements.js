@@ -13,7 +13,7 @@ const ScreenShotElements = ({
   ScreenShotElementsRef,
 }) => {
   const backgroundImages = [
-    "https://interactivewallgallery.blob.core.windows.net/tv-screen-gallery/ThriveTogether.png",
+    "/images/MicrosoftTeams-image (9).png",
     "https://interactivewallgallery.blob.core.windows.net/tv-screen-gallery/LookBeyondToday.png",
     "https://interactivewallgallery.blob.core.windows.net/tv-screen-gallery/Wellignton.png",
   ];

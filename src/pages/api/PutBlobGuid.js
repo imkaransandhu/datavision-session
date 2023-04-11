@@ -9,10 +9,9 @@ export const config = {
 
 export default async function updateBlobGuid(req, res) {
   const { guid } = req.body;
-  const accountName = "guiddatavision";
-  const accountKey =
-    "YrmqEDdjAuaxRjCxP4RrJfr81NfcT8chie+3Vt7l4rXMzeiCC1lq5Ax8IpkYNSchnZd+/btwoXBf+AStdjMThA==";
-  const containerName = "var-guid";
+  const accountName = process.env.ACCOUNT_NAME;
+  const accountKey = process.env.AZURE_BLOB_KEY;
+  const containerName = process.env.CONTAINER_GUID;
   const blobName = "guid.json";
 
   const connectionString = `DefaultEndpointsProtocol=https;AccountName=${accountName};AccountKey=${accountKey};EndpointSuffix=core.windows.net`;
