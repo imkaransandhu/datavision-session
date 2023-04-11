@@ -2,7 +2,10 @@ import { useState, useEffect } from "react";
 import styles from "./dropdown.module.css";
 import Image from "next/image";
 
-export default function DropDown({ defaultSortingOption, setDefaultSortingOption}) {
+export default function DropDown({
+  defaultSortingOption,
+  setDefaultSortingOption,
+}) {
   const [dropDownOpen, setDropDownOpen] = useState(false);
   const [otherSortingOption, setOtherSortingOption] = useState("Oldest");
 
@@ -21,7 +24,9 @@ export default function DropDown({ defaultSortingOption, setDefaultSortingOption
   };
 
   useEffect(() => {
-    console.log(`Dropdown component. defaultSorting option is: "${ defaultSortingOption }"`);
+    console.log(
+      `Dropdown component. defaultSorting option is: "${defaultSortingOption}"`
+    );
   }, [defaultSortingOption]);
 
   return (

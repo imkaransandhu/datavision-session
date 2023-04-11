@@ -39,7 +39,6 @@ const PutScreenShotToBlob = (imgSrc, socket) => {
       .request(config)
       .then((response) => {
         socket.publish("uploaded-blob", fileName);
-        // socket.emit("uploaded-blob", fileName);
       })
       .catch((error) => {
         console.log(error);

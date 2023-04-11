@@ -1,5 +1,4 @@
 import * as bodySegmentation from "@tensorflow-models/body-segmentation";
-import * as cocoSsd from "@tensorflow-models/coco-ssd";
 import "@tensorflow/tfjs-backend-cpu";
 import "@tensorflow/tfjs-backend-webgl";
 
@@ -13,8 +12,7 @@ export default async function RemoveBackground(
   newCanvasEl2,
   newCanvasEl3,
   newCanvasEl4,
-  newCanvasEl5,
-  setDisplayValueText
+  newCanvasEl5
 ) {
   const model = bodySegmentation.SupportedModels.MediaPipeSelfieSegmentation;
   const segmenterConfig = {
@@ -54,10 +52,6 @@ export default async function RemoveBackground(
       const flipHorizontal = true;
       videoToRevealEl.crossOrigin = "anonymous";
       canvasEl.crossOrigin = "anonymous";
-      // canvasEl.height = screen.height;
-      // canvasEl.width = screen.width;
-      // videoToRevealEl.width = screen.width;
-      // videoToRevealEl.height = screen.height;
       // Draw the mask onto the image on a canvas.  With opacity set to 0.7 and
       // maskBlurAmount set to 3, this will darken the background and blur the
       // darkened background's edge.

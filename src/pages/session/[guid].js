@@ -1,12 +1,16 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useContext } from "react";
-import SessionContext from "./../../Context/SessionContext";
 import axios from "axios";
 import Cookies from "js-cookie";
-import LoadScreen from "@/components/Shared/LoadScreen/LoadScreen";
-import io from "socket.io-client";
 import Ably from "ably";
+
+// Context
+import SessionContext from "./../../Context/SessionContext";
+
+// Components
+import LoadScreen from "@/components/Shared/LoadScreen/LoadScreen";
+
 export default function ValidatingUser() {
   const router = useRouter();
   const { guid } = router.query;
@@ -14,18 +18,19 @@ export default function ValidatingUser() {
   const [session, setSession] = useContext(SessionContext);
   const [sessionExpired, setSessionExpired] = useState(false);
   const [loading, setLoading] = useState(true);
+
   useEffect(() => {
+    // Loading guif from azure blob file
     axios
       .get("/api/GetBlobGuid")
       .then((response) => setGuidFromFile(response.data))
       .catch((error) => console.error(error));
 
     if (guid) {
-      console.log(guid, guidFromFile);
       if (guid === guidFromFile) {
         setLoading(true);
         setSessionExpired(false);
-        const expirationTime = new Date(Date.now() + 40 * 1 * 1000); // 5 minutes from now
+        const expirationTime = new Date(Date.now() + 40 * 1 * 1000); // 40 seconds from now
         Cookies.set(
           "userSession",
           `{ "guid" : "${guid}", "expirationTime" : "${expirationTime}", "isVerified": "${true}" }`,
@@ -33,38 +38,17 @@ export default function ValidatingUser() {
         );
         setSession({ guid, expirationTime, isVerified: true });
         async function socketRun() {
-          // For the full code sample see here: https://github.com/ably/quickstart-js
           const ably = new Ably.Realtime.Promise(
-            "KpozvA.0YAo5A:NyOJl5ifGsBr-5GlacgyQMxe0io77DeAnUiUfXe-uUI"
+            process.env.NEXT_PUBLIC_ALBY_KEY
           );
           await ably.connection.once("connected");
-          console.log("Connected to Ably!");
-
           // get the channel to subscribe to
           const channel = ably.channels.get("quickstart");
-
-          /* 
-          Subscribe to a channel. 
-          The promise resolves when the channel is attached 
-          (and resolves synchronously if the channel is already attached).
-          */
           const timeToCreateQrCode = "40";
-
           await channel.publish("change-qr-code", timeToCreateQrCode);
-
-          // await fetch("/api/screenshot");
-          // const newSocket = io();
-
-          // newSocket.on("connect", () => {
-          //   console.log("connected");
-          //   const timeToCreateQrCode = 40;
-          //   newSocket.emit("change-qr-code", timeToCreateQrCode);
-          // });
-
           setLoading(false);
         }
         socketRun();
-
         router.push("/onboarding");
       } else {
         setLoading(false);

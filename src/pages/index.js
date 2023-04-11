@@ -1,31 +1,33 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
-import styles from "./page.module.css";
-import useSWR from "swr";
+import { useContext, useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import Link from "next/link";
+import Image from "next/image";
+import axios from "axios";
+import Cookies from "js-cookie";
+
+// Components
 import WallMenu from "@/components/Shared/WallHeader/WallHeader";
 import CaptureSession from "@/components/Shared/CaptureSession/CaptureSession";
 import DropDown from "@/components/dropdown";
-import Image from "next/image";
 import GalleryGrid from "@/components/GalleryGrid/GalleryGrid";
-import { useContext, useEffect, useState } from "react";
-import Link from "next/link";
-import io from "socket.io-client";
 import ImageView from "@/components/Shared/ImageView/ImageView";
-import axios from "axios";
-import { useRouter } from "next/router";
 import SessionContext from "@/Context/SessionContext";
 import LoadScreen from "@/components/Shared/LoadScreen/LoadScreen";
 
+// css
+import styles from "./page.module.css";
+
 export default function Home() {
-  const [isListView, setIsListView] = useState(true);
-  const [imgSrc, setImgSrc] = useState(null);
-  const [data, setData] = useState();
-  const [defaultSortingOption, setDefaultSortingOption] = useState("Latest");
-  const router = useRouter();
+  const [isListView, setIsListView] = useState(true); // Lisitng View of images
+  const [imgSrc, setImgSrc] = useState(null); // Image Preview Screen
+  const [data, setData] = useState(); // data from blob storage
+  const [defaultSortingOption, setDefaultSortingOption] = useState("Latest"); // Sorting of data
+  const router = useRouter(); // router from next.js
   const { blobName } = router.query;
+  const [session, setSession] = useContext(SessionContext); // session from useContext
 
-  const [session, setSession] = useContext(SessionContext);
-
+  // fecthing data from api
   async function fetchData() {
     let config = {
       method: "get",
@@ -37,82 +39,42 @@ export default function Home() {
     axios
       .request(config)
       .then((response) => {
-        const sortedData = sortByLastModified(response.data);
-        setData(sortedData);
+        setData(response.data);
       })
       .catch((error) => {
         console.log(error);
       });
   }
 
-  function sortByLastModified(arr) {
-    arr.sort(function (a, b) {
-      return new Date(b.createdOn).getTime() - new Date(a.createdOn).getTime();
-    });
-    return arr;
-  }
-
+  // Use effect to look if the cookie has session in it
   useEffect(() => {
     fetchData();
-    if (session.isVerified) {
-      socketInitializer();
+    const hasSessionCookie = Cookies.get("userSession");
+    if (hasSessionCookie) {
+      setSession(JSON.parse(hasSessionCookie));
     }
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session]);
+  }, []);
 
+  // Blob routea and data to show image
   useEffect(() => {
     if (blobName && data) {
       setImgSrc(data[0].url);
     }
   }, [blobName, data]);
 
+  // Show Image Preview by setting the Src
   const loadImageView = (e) => {
     const imageSource = e.target.getAttribute("src");
     setImgSrc(imageSource);
   };
 
+  // Cross button to show gallery page from image preivew screen
   const handleImageViewCrossBtn = () => {
     setImgSrc(null);
   };
 
-  const socketInitializer = async () => {
-    await fetch("/api/screenshot");
-    const newSocket = io();
-
-    newSocket.on("connect", () => {
-      console.log("connected");
-    });
-  };
-
-  // if (error)
-  //   return (
-  //     <div
-  //       style={{
-  //         backgroundColor: "black",
-  //         height: "100vh",
-  //         display: "flex",
-  //         justifyContent: "center",
-  //         alignItems: "center",
-  //       }}
-  //     >
-  //       <h1>Failed to load</h1>
-  //     </div>
-  //   );
-  // if (isLoading)
-  //   return (
-  //     <div
-  //       style={{
-  //         backgroundColor: "black",
-  //         height: "100vh",
-  //         display: "flex",
-  //         justifyContent: "center",
-  //         alignItems: "center",
-  //       }}
-  //     >
-  //       <h1>Loading...</h1>
-  //     </div>
-  //   );
+  // Loading screen while thye fetcing the data
   if (!data || !session) {
     return <LoadScreen first={"Please Wait"} second={"Loading ..."} />;
   }

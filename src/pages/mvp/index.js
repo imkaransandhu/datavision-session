@@ -1,19 +1,22 @@
 "use client";
 import { Fragment, useEffect, useRef, useState } from "react";
-import io from "socket.io-client";
 import html2canvas from "html2canvas";
 import { v4 as uuidv4 } from "uuid";
+import Ably from "ably";
+
+// Components
 import WorkingElements from "./WorkingElements/WorkingElements";
-import RemoveBackground from "../../functions/RemoveBackground";
 import handleScreenChange from "@/functions/HandleScreenChange";
 import ScreenShotElements from "./ScreenShotElements/ScreenShotElements";
+
+// Functions
 import PutScreenShotToBlob from "@/axiosRequest/PutScreenShotToBlob";
-import styles from "./WorkingElements/WorkingElements.module.css";
 import PostGuid from "@/axiosRequest/PostGuid";
-import Ably from "ably";
+import RemoveBackground from "../../functions/RemoveBackground";
 import URL from "@/functions/Url";
 
-// Note: Require the cpu and webgl backend and add them to package.json as peer dependencies.
+// CSS
+import styles from "./WorkingElements/WorkingElements.module.css";
 
 export default function Home() {
   const canvas = useRef(); //First canvas on which the the Silhouette is drawn with black background
@@ -67,30 +70,17 @@ export default function Home() {
     const newGuid = uuidv4();
 
     PostGuid(newGuid);
-    console.log(process.env);
-
+    console.log(`${URL}/session/${newGuid}`);
     setUrl(`${URL}/session/${newGuid}`);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const socketInitializer = async () => {
-    // For the full code sample see here: https://github.com/ably/quickstart-js
-    const ably = new Ably.Realtime.Promise(
-      "KpozvA.0YAo5A:NyOJl5ifGsBr-5GlacgyQMxe0io77DeAnUiUfXe-uUI"
-    );
+    const ably = new Ably.Realtime.Promise(process.env.NEXT_PUBLIC_ALBY_KEY);
     await ably.connection.once("connected");
     console.log("Connected to Ably!");
-
-    // get the channel to subscribe to
     const channel = ably.channels.get("quickstart");
-
-    /* 
-  Subscribe to a channel. 
-  The promise resolves when the channel is attached 
-  (and resolves synchronously if the channel is already attached).
-*/
     await channel.subscribe("send-blob", (name) => {
-      console.log(name.data);
       setTimeout(() => {
         takeScreenshot(channel);
         setTimeout(() => {
@@ -111,27 +101,11 @@ export default function Home() {
         setShowQrCode(true);
       }, newTime * 1000);
     });
-    // newSocket.on("receive-blob", () => {
-    //   takeScreenshot(newSocket);
-    //   handleScreenChange(setCurrentScreen);
-    // });
 
-    // newSocket.on("create-qr-code", (time) => {
-    //   console.log("creating a new qr code");
-    //   setShowQrCode(false);
-    //   const newGuid = uuidv4();
-    //   PostGuid(newGuid);
-    //   setUrl(`http://192.168.1.20:3000/session/${newGuid}`);
-    //   setTimeout(() => {
-    //     setShowQrCode(true);
-    //   }, time * 1000);
-    // });
-    // setMySocket(newSocket);
     setMySocket(channel);
   };
 
   function takeScreenshot(socket) {
-    console.log("sdfsdfsd");
     let dataUrl;
     const canvasElement = ScreenShotElementsRef.current; //getting the container in which the canvas element is
     html2canvas(canvasElement).then((canvas) => {

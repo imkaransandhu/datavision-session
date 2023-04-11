@@ -1,12 +1,7 @@
-import { useEffect, useState } from "react";
+import BackgroundImage from "../BackgroundImage/BackgroundImage";
+import CanvasElement from "../CanvasElement/CanvasElement";
 
 import styles from "./ScreenShotElements.module.css";
-
-import BackgroundImage from "../BackgroundImage/BackgroundImage";
-import ValueElement from "../ValueElement/ValueElement";
-import CanvasElement from "../CanvasElement/CanvasElement";
-import FetchTvScreenGallery from "@/axiosRequest/FetchTvScreenGallery";
-
 const ScreenShotElements = ({
   newCanvas1,
   newCanvas2,

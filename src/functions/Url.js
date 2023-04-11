@@ -1,4 +1,3 @@
-// const URL = "http://localhost:3000";
-const URL = "https://datavision-session.vercel.app";
+const URL = process.env.NEXT_PUBLIC_WEB_URL;
 
 export default URL;
