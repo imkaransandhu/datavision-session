@@ -2,7 +2,7 @@ const { BlobServiceClient } = require("@azure/storage-blob");
 export default async function getBlobGuid(request, res) {
   const accountName = process.env.ACCOUNT_NAME;
   const accountKey = process.env.AZURE_BLOB_KEY;
-  const containerName = process.env.CONTAINER_GUID;
+  const containerName = process.env.BLOB_GUID;
   const blobName = "guid.json";
   const connStr = `DefaultEndpointsProtocol=https;AccountName=${accountName};AccountKey=${accountKey};EndpointSuffix=core.windows.net`;
   const blobServiceClient = BlobServiceClient.fromConnectionString(connStr);

@@ -11,7 +11,7 @@ export default async function updateBlobGuid(req, res) {
   const { guid } = req.body;
   const accountName = process.env.ACCOUNT_NAME;
   const accountKey = process.env.AZURE_BLOB_KEY;
-  const containerName = process.env.CONTAINER_GUID;
+  const containerName = process.env.BLOB_GUID;
   const blobName = "guid.json";
 
   const connectionString = `DefaultEndpointsProtocol=https;AccountName=${accountName};AccountKey=${accountKey};EndpointSuffix=core.windows.net`;
