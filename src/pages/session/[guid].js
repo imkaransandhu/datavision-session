@@ -17,6 +17,7 @@ export default function ValidatingUser() {
   const [guidFromFile, setGuidFromFile] = useState(null);
   const [session, setSession] = useContext(SessionContext);
   const [sessionExpired, setSessionExpired] = useState(false);
+  const [env, setEnv] = useState();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -26,7 +27,9 @@ export default function ValidatingUser() {
       .then((response) => setGuidFromFile(response.data))
       .catch((error) => console.error(error));
 
-    if (guid) {
+    getUrlEnv();
+
+    if (guid && env) {
       if (guid === guidFromFile) {
         setLoading(true);
         setSessionExpired(false);
@@ -38,9 +41,7 @@ export default function ValidatingUser() {
         );
         setSession({ guid, expirationTime, isVerified: true });
         async function socketRun() {
-          const ably = new Ably.Realtime.Promise(
-            process.env.NEXT_PUBLIC_ALBY_KEY
-          );
+          const ably = new Ably.Realtime.Promise(env);
           await ably.connection.once("connected");
           // get the channel to subscribe to
           const channel = ably.channels.get("quickstart");
@@ -56,7 +57,26 @@ export default function ValidatingUser() {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [guid, guidFromFile]);
+  }, [guid, guidFromFile, env]);
+
+  function getUrlEnv() {
+    let config = {
+      method: "get",
+      maxBodyLength: Infinity,
+      url: "/api/getEnv",
+      headers: {},
+    };
+
+    axios
+      .request(config)
+      .then((response) => {
+        console.log(JSON.stringify(response.data));
+        setEnv(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
 
   if (loading) {
     return <LoadScreen first={"Matching"} second={"Please Wait..."} />;

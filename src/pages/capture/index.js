@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { useContext } from "react";
 import Cookies from "js-cookie";
 import Ably from "ably";
-
+import axios from "axios";
 // Context
 import SessionContext from "./../../Context/SessionContext";
 
@@ -24,11 +24,12 @@ export default function Home() {
 
   const routeToGalleryImageView = useRouter();
   const [session, setSession] = useContext(SessionContext);
+  const [env, setEnv] = useState();
 
   useEffect(() => {
     if (session.isVerified) {
       setExpired(false);
-      socketInitializer();
+      getUrlEnv();
     } else {
       setExpired(true);
       setTimeout(() => {
@@ -39,6 +40,33 @@ export default function Home() {
   }, [session]);
 
   useEffect(() => {
+    if (env) {
+      socketInitializer();
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [env]);
+
+  function getUrlEnv() {
+    let config = {
+      method: "get",
+      maxBodyLength: Infinity,
+      url: "/api/getEnv",
+      headers: {},
+    };
+
+    axios
+      .request(config)
+      .then((response) => {
+        console.log(JSON.stringify(response.data));
+        setEnv(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
+
+  useEffect(() => {
     const hasSessionCookie = Cookies.get("userSession");
     if (hasSessionCookie) {
       setSession(JSON.parse(hasSessionCookie));
@@ -47,7 +75,7 @@ export default function Home() {
   }, []);
 
   const socketInitializer = async () => {
-    const ably = new Ably.Realtime.Promise(process.env.NEXT_PUBLIC_ALBY_KEY);
+    const ably = new Ably.Realtime.Promise(env);
     await ably.connection.once("connected");
     const channel = ably.channels.get("quickstart");
     await channel.subscribe("uploaded-blob", (blobName) => {

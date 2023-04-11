@@ -1,3 +1,3 @@
-const URL = process.env.NEXT_PUBLIC_WEB_URL;
+const URL = "https://delightful-bay-057d0d410.3.azurestaticapps.net";
 
 export default URL;

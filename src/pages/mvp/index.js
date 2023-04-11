@@ -3,7 +3,7 @@ import { Fragment, useEffect, useRef, useState } from "react";
 import html2canvas from "html2canvas";
 import { v4 as uuidv4 } from "uuid";
 import Ably from "ably";
-
+import axios from "axios";
 // Components
 import WorkingElements from "./WorkingElements/WorkingElements";
 import handleScreenChange from "@/functions/HandleScreenChange";
@@ -36,6 +36,7 @@ export default function Home() {
   const [url, setUrl] = useState();
   const [showQrCode, setShowQrCode] = useState(true);
   const [mySocket, setMySocket] = useState({});
+  const [env, setEnv] = useState();
 
   useEffect(() => {
     // Assigning the current states
@@ -65,7 +66,7 @@ export default function Home() {
       setDisplayValueText
     );
 
-    socketInitializer();
+    getUrlEnv();
     // Generate a new GUID
     const newGuid = uuidv4();
 
@@ -75,8 +76,35 @@ export default function Home() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    if (env) {
+      socketInitializer();
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [env]);
+
+  function getUrlEnv() {
+    let config = {
+      method: "get",
+      maxBodyLength: Infinity,
+      url: "/api/getEnv",
+      headers: {},
+    };
+
+    axios
+      .request(config)
+      .then((response) => {
+        console.log(JSON.stringify(response.data));
+        setEnv(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
+
   const socketInitializer = async () => {
-    const ably = new Ably.Realtime.Promise(process.env.NEXT_PUBLIC_ALBY_KEY);
+    const ably = new Ably.Realtime.Promise(env);
     await ably.connection.once("connected");
     console.log("Connected to Ably!");
     const channel = ably.channels.get("quickstart");
